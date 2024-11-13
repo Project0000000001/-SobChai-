@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShobChai.Com</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+        section {
+            padding: 20px;
+        }
+        .main-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            margin: 10px 0;
+            width: 100%;
+            text-align: left;
+        }
+        .sub-options, .sub-sub-options {
+            display: none;
+            margin-left: 20px;
+        }
+        .sub-options button, .sub-sub-options button {
+            background-color: #ddd;
+            color: #333;
+            padding: 8px 15px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            display: block;
+            margin: 5px 0;
+        }
+        .sub-options button:hover, .sub-sub-options button:hover {
+            background-color: #ccc;
+        }
+        .profile-card {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+        .required::after {
+            content: " *";
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>ShobChai.Com</h1>
+</header>
+<section>
+    <button class="main-button" onclick="toggleSubOptions('new-services')">Law Assistant</button>
+    <div id="new-services" class="sub-options">
+        <button class="main-button" onclick="toggleSubOptions('search')">উকিল/ক্লায়েন্ট খুঁজুন</button>
+        <div id="search" class="sub-options">
+            <label for="role-select">আমি:</label>
+            <select id="role-select" name="role-select">
+                <option value="" disabled selected>উকিল/ক্লায়েন্ট</option>
+                <option value="lawyer">উকিল</option>
+                <option value="client">ক্লায়েন্ট</option>
+            </select><br>
+            <label for="type-select">আমার প্রয়োজন:</label><br>
+            <select id="type-select" name="type-select" multiple>
+                <option value="criminal-law">ফৌজদারি আইন</option>
+                <option value="civil-law">দেওয়ানি আইন</option>
+                <option value="family-law">পারিবারিক আইন</option>
+                <option value="corporate-law">কর্পোরেট আইন</option>
+                <option value="labor-law">শ্রম আইন</option>
+                <option value="tax-law">কর আইন</option>
+            </select><br>
+            <label for="country">দেশ:</label>
+            <input type="text" id="country" name="country"><br>
+            <label for="division">বিভাগ:</label>
+            <input type="text" id="division" name="division"><br>
+            <label for="district">জেলা:</label>
+            <input type="text" id="district" name="district"><br>
+            <button onclick="submitSearch()">সাবমিট</button>
+        </div>
+        <button class="main-button" style="background-color:#FF5733; color: white;" onclick="toggleSubOptions('create-profile')">প্রোফাইল তৈরি করুন</button>
+        <div id="create-profile" class="sub-options">
+            <label for="profile-type">আমি:</label>
+            <select id="profile-type" name="profile-type" onchange="showProfileFields()">
+                <option value="" disabled selected>উকিল/ক্লায়েন্ট</option>
+                <option value="lawyer">উকিল</option>
+                <option value="client">ক্লায়েন্ট</option>
+            </select><br>
+            <div id="lawyer-profile" style="display:none;">
+                <label for="lawyer-name" class="required">নাম:</label>
+                <input type="text" id="lawyer-name" name="lawyer-name"><br>
+                <label for="lawyer-mobile" class="required">মোবাইল:</label>
+                <input type="text" id="lawyer-mobile" name="lawyer-mobile"><br>
+                <label for="lawyer-type" class="required">আমি একজন:</label><br>
+                <select id="lawyer-type" name="lawyer-type" multiple>
+                    <option value="criminal-law">ফৌজদারি আইনজীবী </option>
+                    <option value="civil-law">দেওয়ানি আইনজীবী </option>
+                    <option value="family-law">পারিবারিক আইনজীবী</option>
+                    <option value="corporate-law">কর্পোরেট আইনজীবী</option>
+                    <option value="labor-law">শ্রম আইনজীবী</option>
+                    <option value="tax-law">কর আইনজীবী</option>
+                </select><br>
+                <label for="experience" class="required">অভিজ্ঞতা (বছর):</label>
+                <input type="text" id="experience" name="experience"><br>
+                <label for="cases" class="required">মোট মামলা লড়েছি :</label>
+                <input type="text" id="cases" name="cases"><br>
+                <label for="lawyer-country" class="required">দেশ:</label>
+                <input type="text" id="lawyer-country" name="lawyer-country"><br>
+                <label for="lawyer-division" class="required">বিভাগ:</label>
+                <input type="text" id="lawyer-division" name="lawyer-division"><br>
+                <label for="lawyer-district" class="required">জেলা:</label>
+                <input type="text" id="lawyer-district" name="lawyer-district"><br>
+            </div>
+            <div id="client-profile" style="display:none;">
+                <label for="client-name" class="required">নাম:</label>
+                <input type="text" id="client-name" name="client-name"><br>
+                <label for="client-mobile" class="required">মোবাইল:</label>
+                <input type="text" id="client-mobile" name="client-mobile"><br>
+                <label for="client-type" class="required">আমার প্রয়োজন:</label><br>
+                <select id="client-type" name="client-type" multiple>
+                    <option value="criminal-law">ফৌজদারি আইনজীবী</option>
+                    <option value="civil-law">দেওয়ানি আইনজীবী</option>
+                    <option value="family-law">পারিবারিক আইনজীবী</option>
+                    <option value="corporate-law">কর্পোরেট আইনজীবী</option>
+                    <option value="labor-law">শ্রম আইনজীবী</option>
+                    <option value="tax-law">কর আইনজীবী</option>
+                </select><br>
+                <label for="financial-status" class="required">আর্থিক অবস্থা:</label>
+                <input type="text" id="financial-status" name="financial-status"><br>
+                <label for="client-country" class="required">দেশ:</label>
+                <input type="text" id="client-country" name="client-country"><br>
+                <label for="client-division" class="required">বিভাগ:</label>
+                <input type="text" id="client-division" name="client-division"><br>
+                <label for="client-district" class="required">জেলা:</label>
+                <input type="text" id="client-district" name="client-district"><br>
+            </div>
+            <button onclick="toggleSubOptions('agreement')">এগ্রিমেন্ট</button>
+            <div id="agreement" class="sub-options">
+                <label><input type="checkbox" id="agreement1"> আমি স্রষ্টার নামে শপথ করে বলছি যে,উপরে দেয়া সকল তথ্য সঠিক, এবং এখান থেকে আমি কোনো অসৎ উপায় অবলম্বন করবো না, এবং আমার দ্বারা কারো ক্ষতি হলে সেই দায়ভার এই ওয়েবসাইট এর মালিকের নয়, সেটা আখেরাত কিংবা দুনিয়া যেকোনো জায়গায়</br></label>
+                <label><input type="checkbox" id="agreement2">এখান থেকে সেবা নিয়ে আমি অবশ্যই ওয়েবসাইট কর্তৃপক্ষ কে হাদিয়া দিবো।</label><br>
+                <button onclick="submitProfile()">সাবমিট</button>
+            </div>
+        </div>
+        <button class="main-button" onclick="toggleSubOptions('login')">লগিং</button>
+        <div id="login" class="sub-options">
+            <label for="id-number">আপনার আইডি নাম্বার লিখুন:</label>
+            <input type="text" id="id-number" name="id-number"><br>
+            <label for="password">পাসওয়ার্ড:</label>
+            <input type="password" id="password" name="password"><br>
+            <button onclick="login()">লগিং</button>
+        </div>
+        <button class="main-button" onclick="location.reload()">পেজ রিলোড</button>
+    </div>
+</section>
+
+<script>
+    let profiles = [];
+
+    function toggleSubOptions(id) {
+        const element = document.getElementById(id);
+        element.style.display = element.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function showProfileFields() {
+        const selectedType = document.getElementById('profile-type').value;
+        document.getElementById('lawyer-profile').style.display = selectedType === 'lawyer' ? 'block' : 'none';
+        document.getElementById('client-profile').style.display = selectedType === 'client' ? 'block' : 'none';
+    }
+
+    function validateForm(profileType) {
+        let isValid = true;
+        const requiredFields = profileType === 'lawyer'
+            ? ['lawyer-name', 'lawyer-mobile', 'lawyer-type', 'experience', 'cases', 'lawyer-country', 'lawyer-division', 'lawyer-district']
+            : ['client-name', 'client-mobile', 'client-type', 'financial-status', 'client-country', 'client-division', 'client-district'];
+
+        // Clear previous error messages
+        document.querySelectorAll('.error-message').forEach(el => el.remove());
+
+        requiredFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (!field.value) {
+                isValid = false;
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message';
+                errorDiv.textContent = 'This field is required';
+                field.parentNode.insertBefore(errorDiv, field.nextSibling);
+            }
+        });
+
+        const agreement1 = document.getElementById('agreement1').checked;
+        const agreement2 = document.getElementById('agreement2').checked;
+
+        if (!agreement1 || !agreement2) {
+            isValid = false;
+            alert('Please agree to all terms and conditions');
+        }
+        return isValid;
+    }
+
+    function submitProfile() {
+        const profileType = document.getElementById('profile-type').value;
+
+        if (!validateForm(profileType)) {
+            return;
+        }
+
+        // ইউনিক আইডি তৈরি
+        const name = profileType === 'lawyer'
+            ? document.getElementById('lawyer-name').value
+            : document.getElementById('client-name').value;
+
+        const mobile = profileType === 'lawyer'
+            ? document.getElementById('lawyer-mobile').value
+            : document.getElementById('client-mobile').value;
+
+        // নামের প্রথম দুই অক্ষর
+        const namePrefix = name.substring(0, 2).toUpperCase();
+
+        // মোবাইল নাম্বারের শেষ ৩ অক্ষর
+        const mobileSuffix = mobile.slice(-3);
+
+        // ইউনিক আইডি তৈরি
+        const uniqueId = namePrefix + mobileSuffix;
+
+        // Create profile object
+        const profile = profileType === 'lawyer'
+            ? {
+                type: 'lawyer',
+                uniqueId: uniqueId,
+                name: document.getElementById('lawyer-name').value,
+                mobile: document.getElementById('lawyer-mobile').value,
+                expertise: Array.from(document.getElementById('lawyer-type').selectedOptions).map(opt => opt.value),
+                experience: document.getElementById('experience').value,
+                cases: document.getElementById('cases').value,
+                country: document.getElementById('lawyer-country').value,
+                division: document.getElementById('lawyer-division').value,
+                district: document.getElementById('lawyer-district').value
+            }
+            : {
+                type: 'client',
+                uniqueId: uniqueId,
+                name: document.getElementById('client-name').value,
+                mobile: document.getElementById('client-mobile').value,
+                needs: Array.from(document.getElementById('client-type').selectedOptions).map(opt => opt.value),
+                financialStatus: document.getElementById('financial-status').value,
+                country: document.getElementById('client-country').value,
+                division: document.getElementById('client-division').value,
+                district: document.getElementById('client-district').value
+            };
+
+        // Add profile to array
+        profiles.push(profile);
+
+        // Display success message and show profile
+        alert(`Profile created successfully! Your Unique ID is: ${uniqueId}`);
+        displayProfile(profile);
+    }
+
+    function displayProfile(profile) {
+        const profileDisplay = document.createElement('div');
+        profileDisplay.className = 'profile-card';
+        let profileHTML = `
+            <h3>${profile.type === 'lawyer' ? 'Lawyer' : 'Client'} Profile</h3>
+            <p>Unique ID: ${profile.uniqueId}</p>
+            <p>Name: ${profile.name}</p>
+            <p>Mobile: ${profile.mobile}</p>
+            <p>${profile.type === 'lawyer' ? 'Expertise' : 'Needs'}: ${profile.type === 'lawyer' ? profile.expertise.join(', ') : profile.needs.join(', ')}</p>
+            ${profile.type === 'lawyer' ? `
+                <p>Experience: ${profile.experience} years</p>
+                <p>Cases Handled: ${profile.cases}</p>
+            ` : `
+                <p>Financial Status: ${profile.financialStatus}</p>
+            `}
+            <p>Location: ${profile.district}, ${profile.division}, ${profile.country}</p>
+        `;
+        profileDisplay.innerHTML = profileHTML;
+        document.getElementById('create-profile').appendChild(profileDisplay);
+    }
+
+    function submitSearch() {
+        const searchType = document.getElementById('role-select').value;
+        const searchNeeds = Array.from(document.getElementById('type-select').selectedOptions).map(opt => opt.value);
+        const country = document.getElementById('country').value;
+        const division = document.getElementById('division').value;
+        const district = document.getElementById('district').value;
+
+        // Filter profiles based on search criteria
+        const matches = profiles.filter(profile => {
+            const locationMatch = profile.country === country &&
+                                profile.division === division &&
+                                profile.district === district;
+
+            const typeMatch = (searchType === 'lawyer' && profile.type === 'client') ||
+                             (searchType === 'client' && profile.type === 'lawyer');
+
+            const needsMatch = searchType === 'lawyer'
+                ? profile.needs?.some(need => searchNeeds.includes(need))
+                : profile.expertise?.some(exp => searchNeeds.includes(exp));
+
+            return locationMatch && typeMatch && needsMatch;
+        });
+
+        // Display matches
+        const searchResults = document.createElement('div');
+        searchResults.innerHTML = matches.length
+            ? matches.map(profile => `
+                <div class="profile-card">
+                    <h3>${profile.type === 'lawyer' ? 'Lawyer' : 'Client'} Match Found</h3>
+                    <p>Name: ${profile.name}</p>
+                    <p>${profile.type === 'lawyer' ? 'Expertise' : 'Needs'}: ${profile.type === 'lawyer' ? profile.expertise.join(', ') : profile.needs.join(', ')}</p>
+                    <p>Location: ${profile.district}, ${profile.division}, ${profile.country}</p>
+                </div>
+            `).join('')
+            : '<p>No matches found</p>';
+
+        // Clear previous results and show new ones
+        const previousResults = document.querySelector('.search-results');
+        if (previousResults) previousResults.remove();
+
+        searchResults.className = 'search-results';
+        document.getElementById('search').appendChild(searchResults);
+    }
+
+    function login() {
+        const idNumber = document.getElementById('id-number').value;
+        const password = document.getElementById('password').value;
+
+        // Find the profile with the matching unique ID
+        const profile = profiles.find(p => p.uniqueId === idNumber);
+
+        if (profile) {
+            // Display the profile and enable editing
+            displayProfile(profile);
+            document.getElementById('profile-edit').style.display = 'block';
+            document.getElementById('profile-name').value = profile.name;
+            document.getElementById('profile-mobile').value = profile.mobile;
+            document.getElementById('profile-expertise').value = profile.expertise.join(', ');
+            document.getElementById('profile-experience').value = profile.experience;
+            document.getElementById('profile-cases').value = profile.cases;
+            document.getElementById('profile-financial-status').value = profile.financialStatus;
+            document.getElementById('profile-country').value = profile.country;
+            document.getElementById('profile-division').value = profile.division;
+            document.getElementById('profile-district').value = profile.district;
+        } else {
+            alert('Invalid ID or password');
+        }
+    }
+
+    function updateProfile() {
+        const idNumber = document.getElementById('id-number').value;
+        const profile = profiles.find(p => p.uniqueId === idNumber);
+
+        if (profile) {
+            // Update profile data
+            profile.name = document.getElementById('profile-name').value;
+            profile.mobile = document.getElementById('profile-mobile').value;
+            profile.expertise = document.getElementById('profile-expertise').value.split(',').map(exp => exp.trim());
+            profile.experience = document.getElementById('profile-experience').value;
+            profile.cases = document.getElementById('profile-cases').value;
+            profile.financialStatus = document.getElementById('profile-financial-status').value;
+            profile.country = document.getElementById('profile-country').value;
+            profile.division = document.getElementById('profile-division').value;
+            profile.district = document.getElementById('profile-district').value;
+
+            // Display updated profile
+            displayProfile(profile);
+            alert('Profile updated successfully!');
+        } else {
+            alert('Profile not found');
+        }
+    }
+</script>
+
+<div id="profile-edit" class="sub-options" style="display:none;">
+    <h2>প্রোফাইল এডিট</h2>
+    <label for="profile-name">নাম:</label>
+    <input type="text" id="profile-name" name="profile-name"><br>
+    <label for="profile-mobile">মোবাইল:</label>
+    <input type="text" id="profile-mobile" name="profile-mobile"><br>
+    <label for="profile-expertise">এক্সপারটাইজ:</label>
+    <input type="text" id="profile-expertise" name="profile-expertise"><br>
+    <label for="profile-experience">অভিজ্ঞতা (বছর):</label>
+    <input type="text" id="profile-experience" name="profile-experience"><br>
+    <label for="profile-cases">মোট মামলা লড়েছি :</label>
+    <input type="text" id="profile-cases" name="profile-cases"><br>
+    <label for="profile-financial-status">আর্থিক অবস্থা:</label>
+    <input type="text" id="profile-financial-status" name="profile-financial-status"><br>
+    <label for="profile-country">দেশ:</label>
+    <input type="text" id="profile-country" name="profile-country"><br>
+    <label for="profile-division">বিভাগ:</label>
+    <input type="text" id="profile-division" name="profile-division"><br>
+    <label for="profile-district">জেলা:</label>
+    <input type="text" id="profile-district" name="profile-district"><br>
+    <button onclick="updateProfile()">আপডেট</button>
+</div>
+
+</section>
+
+</body>
+</html>
